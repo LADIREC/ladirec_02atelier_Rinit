@@ -7,11 +7,10 @@ output:
   self_contained: true
   lightbox: true
   highlight: tango
-bibliography: references.bib
 knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile,
                     encoding = encoding,
-                    output_dir = "~/Downloads/rstudio-export (4)")})
+                    output_dir = "/cloud/project")})
 ---
 
 ```{r parametres, include=FALSE, message=FALSE, warning=FALSE}
@@ -38,7 +37,7 @@ Il est fortement recommandé de commenter votre code. Les commentaires aident à
 Après avoir inséré quelques lignes qui expliquent le but de votre script, vous aurez avantage à définir immédiatement le répertoire de travail, c'est-à-dire le dossier dans lequel R devra créer des sous-dossiers de travail pour y enregistrer vos scripts, données et graphiques. Vous pouvez obtenir ce chemin en exécutant la fonction `getwd()` et le modifier en utilisant la fonction `setwd()`. Le chemin doit être placé entre guillemets (simples ou doubles).
 
 ```{r definir-chemin-defaut}
-setwd('~/Downloads/rstudio-export (4)')
+setwd("/cloud/project")
 ```
 
 
