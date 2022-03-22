@@ -1,0 +1,511 @@
+---
+title: "Atelier 1: les fonctions"
+author: "Pascal Brissette"
+date: "25/09/2021"
+output:
+  rmdformats::readthedown:
+  self_contained: true
+  lightbox: true
+  highlight: tango
+bibliography: references.bib
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile,
+                    encoding = encoding,
+                    output_dir = "~/Downloads/rstudio-export (4)")})
+---
+
+```{r parametres, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(rmdformats)
+```
+
+---
+## Prérequis
+
+Pour pouvoir suivre l'atelier qui suit et exécuter ses lignes de code sur *votre propre ordinateur*, vous devrez y avoir installé [R](https://cran.r-project.org/bin/macosx/) et, idéalement, la version gratuite de [RStudio](https://www.rstudio.com/products/rstudio/). Vous pouvez également exécuter le script en ligne, dans l'environnement [RStudio Cloud]('https://rstudio.cloud/).
+
+## Mise en route
+Dans un script R, les éléments d'une ligne qui suivent un croisillon (`#`) ne sont pas exécutés. Vous pouvez donc vous servir du croisillon pour insérer des titres ou des commentaires dans votre script, ou pour vous assurer que R n'exécutera pas une ligne de codes.
+
+```{r commentaires}
+# La présente ligne ne sera pas lue par R, mais la suivante le sera.
+getwd() # Cette fonction renvoie le chemin du répertoire de travail.
+```
+
+Il est fortement recommandé de commenter votre code. Les commentaires aident à comprendre la stratégie utilisée pour exécuter une tâche. Utile pour vous, utile pour ceux qui pourront vous aider si vous êtes bloqué·e·s.
+
+### Le répertoire de travail
+Après avoir inséré quelques lignes qui expliquent le but de votre script, vous aurez avantage à définir immédiatement le répertoire de travail, c'est-à-dire le dossier dans lequel R devra créer des sous-dossiers de travail pour y enregistrer vos scripts, données et graphiques. Vous pouvez obtenir ce chemin en exécutant la fonction `getwd()` et le modifier en utilisant la fonction `setwd()`. Le chemin doit être placé entre guillemets (simples ou doubles).
+
+```{r definir-chemin-defaut}
+setwd('~/Downloads/rstudio-export (4)')
+```
+
+
+### Création de sous-dossiers
+En règle général, on va diviser une tâche en différents scripts, puis les lier ultérieurement entre eux avec la fonction `source()`. Cette façon de faire facilitera la correction et la modification du code, lorsque nécessaire.
+
+Si nous avons plusieurs scripts, plusieurs jeux de données et possiblement plusieurs graphiques et documents, il sera souhaitable d'enregistrer ces documents dans autant de sous-dossiers. La fonction `dir.create()` nous aidera à créer ces sous-dossiers.
+
+```{r sous-dossiers}
+dir.create("code")
+dir.create("donnees")
+dir.create("documents")
+dir.create("resultats")
+
+```
+
+### Opérateurs de base
+En langage R, l'assignation d'une valeur à une variable, donc la création d'un objet, se fait avec l'opérateur `<-`. L'opérateur `=` peut également fonctionner, mais, par convention, on l'utilise plutôt à l'intérieur de fonctions, pour définir les arguments.
+
+```{r assignation-1}
+
+mon_auteur <- "Flaubert" # Assignation de la chaîne de caractères "Flaubert" à la variable `mon_auteur`.
+paste(mon_auteur, "est mon auteur préféré", sep = " ") # Ici, on utilise la fonction paste et on indique que la concaténation doit se faire en insérant une espace entre chacun des éléments.
+
+```
+
+Si vous souhaitez savoir quels sont tous les paramètres que vous pouvez fournir à une fonction, vous pouvez exécuter la fonction précédée d'un point d'interrogation. Une fenêtre d'aide s'ouvrira dans RStudio.
+
+```{r}
+?paste()
+```
+
+Un deuxième raccourci très utile, et que je vous encourage à utiliser le plus rapidement possible dans votre apprentissage, est celui qui permet d'exécuter une ligne de commande: `CMD` + `retour` (Mac) `Ctrl` + `Shift` + `Enter` (Linux/Windows).
+
+### Opérateurs de base
+R est d'abord et avant tout une calculatrice, et peut être utilisé comme telle avec différents opérateurs.
+
+```{r operateurs-de-base}
+1 + 5
+5 - 67
+45 * 32 # Multiplication
+144 / 58 # Simple division
+144 %/% 58 # Division sans reste
+144 %% 58 # Obtenir le reste
+4 ^ 3 # exposant
+```
+
+Ses opérateurs logiques sont similaires à ceux que vous utilisez déjà dans des moteurs de recherche.
+
+```{r operateurs-logiques}
+3 == 4
+3 != 4
+3 > 4
+3 < 4
+3 <= 4
+3 >= 4
+```
+
+Si on assigne un opérateur de calcul à une chaîne de caractères, R renverra une erreur.
+```{r r-litterature}
+# Pour exécuter la ligne qui suit, supprimez le croisillon :
+# proust > Druon
+# b < c
+```
+
+Dans R, les lettres utilisées sans guillemets sont réservées pour des assignations. Des objets (données, fonctions, etc.) sont créés et inscrits en mémoire. Avec l'opérateur `<-`, on assigne cette information à une variable, qui peut être composée de lettres et de chiffres, pour autant que ces chiffres ne soient pas en position de tête.
+
+```{r assignations}
+
+Druon <- 1
+Proust <- 10
+Proust > Druon
+
+```
+
+D'après vous, l'exécution du code ci-dessous renverra-t-elle une erreur? Pourquoi?
+
+```{r}
+
+"z">"a"
+
+# letters
+# LETTERS
+
+```
+
+
+
+Certains mots sont réservés et ne doivent pas être utilisés dans le cadre d'assignations:
+
+* NULL
+* NA
+* INF
+* FALSE
+* TRUE
+* BREAK
+* IF
+* ELSE
+* FOR
+* WHILE
+* NEXT
+
+Un truc: assigner vos valeurs ou fonctions à des mots français (sans accent): vous êtes certaine·e·s de ne pas utiliser un mot réservé.
+
+## Types de données
+Créons quelques objets et demandons à R de nous indiquer leurs types.
+
+```{r}
+mot <- "baudelaire"
+class(mot)
+
+nombre <- 2021
+class(nombre)
+
+vrai_ou_faux <- 1 > 2
+class(vrai_ou_faux)
+
+entier <- 22L
+class(entier)
+
+fraction <- 3.33
+class(fraction)
+
+typeof(entier)
+typeof(fraction)
+
+```
+
+On voit que les nombres 22 et 3.33 sont de type `numeric`. Plus précisément, l'un est un entier (`integer`), l'autre un nombre avec décimale (`double`). Pour vous assurer que R considère un nombre comme un entier et ne lui applique pas d'emblée un statut de `double`, il faut ajouter un `L` après le nombre en question.
+
+Il existe d'autres types d'objets (facteur, Date, POSIXct, etc.) sur lesquels nous aurons l'occasion de revenir, mais les quatre types ci-dessus (`character`, `integer`, `double`, `logical`) sont les plus importants et les plus souvent utilisés.
+
+## Les fonctions
+On a utilisé jusqu'ici quelques-unes des fonctions de base de R:
+
+* c()
+* getwd()
+* setwd()
+* dir.create()
+* class()
+* typeof()
+
+D'autres fonctions de base sont utilisées très fréquemment:
+
+* install.packages()
+* library()
+* str()
+* nrow()
+* ncol()
+* rownames()
+* colnames()
+* length()
+* dim()
+* paste()
+* head()
+* tail()
+* summary()
+* rm()
+
+Vous n'avez pas à installer ou à appeler des extensions externes pour utiliser les fonctions ci-dessus. Elles sont, comme plusieurs autres, installées et activées par défaut. Une description sommaire de l'ensemble des fonctions de base peut être obtenue en exécutant la ligne de code `library(help = "base")` dans la console.
+
+Plus de 10 000 extensions ont été créées pour offrir des fonctions concurrentes ou complémentaires à celles de R-base ou pour exécuter des tâches qui ne sont pas couvertes par l'extension de base. L'exploration de ces nombreuses extensions fera l'objet d'un atelier séparé. Pour l'instant, je souhaite plutôt que vous puissiez vous familiariser avec la structure des fonctions et que vous puissiez créer la vôtre.
+
+
+## Les structures de données
+
+### Le vecteur
+
+Le vecteur est une structure à une seule dimension qui peut contenir un nombre quasi illimité d'éléments (la limite étant la mémoire du système). Sa seule contrainte est de ne pouvoir accepter que des éléments du même type. Un vecteur doit être composé exclusivement de caractères, ou de nombres, ou de booléens (TRUE/FALSE). Si nous essayons d'assembler dans un vecteur, avec la fonction de concaténation `c()`, un nombre (`numeric`), un booléen et une chaine de caractères (`character`), R forcera la transformation du nombre et du booléen en chaine de caractères:
+
+```{r force-caractères}
+c("Baudelaire", 1867L, 44.5, TRUE)
+```
+
+De même, si on concatène un nombre entier et un nombre avec décimales, R forcera la transformation du nombre entier en un nombre comportant une quantité équivalente de décimales. 
+
+```{r force-fraction}
+c(1867L, 4.44399145)
+```
+
+Partant, un vecteur ne peut être lui-même que d'un seul `type`:
+
+```{r type-vecteur}
+typeof(c(1867L, 4.44399145))
+```
+
+Le vecteur a une seule dimension, dont la longueur est équivalente au nombre d'éléments qui le composent.
+
+```{r longueur-vecteur}
+x <- sample(1:50) # On génère un échantillon aléatoire de 500 nombres avec la fonction `sample()`
+head(x, n=10) # On demande à voir les 10 premières lignes
+length(x) # La longueur du vecteur X est équivalente au nombre d'éléments qui le composent
+```
+
+### La liste
+Le vecteur est l'unité fondamentale de R, mais comme il ne peut contenir que des éléments du même type, il n'est pas toujours le plus pratique pour emmagasiner des données. La liste lui ressemble en ceci qu'il s'agit d'une structure de données unidimensionnelle, dont la longueur pourra être obtenue avec la fonction `length()`, mais, contrairement au vecteur, la liste peut contenir toutes sortes d'objets: des vecteurs, des tableaux de données ou `data frame`, des aires de données ou `arrays`, et même des listes. Une liste se crée en utilisant la fonction du même nom, `list()`.
+
+```{r liste}
+ma_liste <- list("A", 4.444, letters, FALSE)
+ma_deuxième_liste <- list(ma_liste, TRUE, "Flaubert")
+
+# ma_liste
+# ma_deuxième_liste
+```
+
+Composons une troisième liste dont les éléments puissent avoir un sens à nos yeux, cela facilitera la compréhension de son fonctionnement. Cette nouvelle liste sera faite d'une série de noms d'auteur·e·s, de titres d'oeuvres et d'années de publication:
+
+```{r création-liste}
+mes_oeuvres_l <- list(auteurs = c("Mercier", "Stael", "Hugo", "Zola"),
+                      oeuvres = c("Tableau de Paris", "Corinne", "Les Misérables", "La Débâcle"),
+                     annees_pub = c(1781, 1807, 1862, 1892))
+mes_oeuvres_l
+```
+
+On peut explorer une liste de différente manière. L'apeler, comme on l'a fait ci-dessus, n'est pas toujours la meilleure d'entre elle! On peut observer sa structure, le type de données qu'elle contient, sa longueur, et ainsi de suite. La fonction `str()` rassemble ces informations de manière très pratique.
+
+```{r}
+str(mes_oeuvres_l)
+```
+
+
+## La matrice
+Une matrice est une structure de données homogène comportant deux dimensions. Elle a des lignes et des colonnes, dont on peut obtenir les dimensions avec la fonction `dim()` ou encore avec les fonctions `str()`, `nrow()` et `ncol()`. Une matrice peut être créée soit en utilisant la fonction `matrix()`, soit assemblant des vecteurs de même longueur. Ci-dessous, `cbind()` crée une matrice en combinant les vecteurs par colonnes tandis que `rbinb()` les combine par rangées :
+
+```{r création-matrice}
+
+(ma_premiere_matrice <- matrix(LETTERS, nrow = 2, ncol = 13))
+
+un_premier_vecteur <- letters[1:10]
+un_deuxieme_vecteur <- letters[11:20]
+
+(ma_deuxieme_matrice <- cbind(un_premier_vecteur, un_deuxieme_vecteur))
+(ma_troisieme_matrice <- rbind(un_premier_vecteur, un_deuxieme_vecteur))
+```
+
+On peut extraire ou manipuler les éléments de la matrice en tenant compte de sa double dimension. Le nom de la variable sera suivi, comme dans le cas du vecteur et de la liste, par des crochets. La seule différence est qu'il devra y avoir double indexation.
+
+Composons, pour illustrer notre propos, une matrice faite de nombres entiers sélectionnés de manière aléatoire.
+
+```{r création-cinquième-matrice}
+(ma_quatrieme_matrice <- matrix(sample(1:25), nrow = 5, ncol = 5))
+```
+
+## L'aire de données
+L'aire de données, ou `array` est une structure homogène à `n` dimensions dont la manipulation s'apparente aux matrices (on pourrait également dire que la matrice est une aire de données comportant seulement deux dimensions). Comme elle est moins fréquemment utilisée que les autres structures dans le traitement des données textuelles, nous l'aborderons lorsque nous en aurons besoin.
+
+## Le tableau de données
+Le tableau de données, ou `data frame` en anglais, est sans doute la structure la plus utilisée dans l'analyse des données. Elle permet d'assembler en une seule table une série de colonnes formées de vecteurs. C'est dire que chaque colonne est composée d'un et d'un seul type de données, mais que deux colonnes ou plus peuvent être de différents types. Le tableau de données partage donc avec la liste la capacité d'assembler des données hétérogènes, mais contrairement à la liste, le tableau de données ne les isole pas. À l'opposée de la matrice, cependant, le tableau de données ne permet pas de faire une opération sur tous les éléments qu'il contient sans devoir itérer sur chaque ligne ou colonne (selon la fonction utilisée).
+
+Le tableau de données peut être créé avec la fonction `data frame`, auquel on fournit un nombre donné de vecteurs. On peut reprendre les noms d'écrivains, les titres d'oeuvres et les dates de publication utilisées ci-dessus, après avoir fait un brin de ménage dans notre environnement de travail.
+
+```{r premier-dataframe}
+rm(list = setdiff(ls(), c("mes_oeuvres_l", "x")))
+
+mes_oeuvres <- mes_oeuvres_l[[2]]
+mes_auteurs <- mes_oeuvres_l[[1]]
+dates_pub <- mes_oeuvres_l[[3]]
+
+(mon_df <- data.frame(auteurs = mes_auteurs,
+                     oeuvres = mes_oeuvres,
+                     annees = as.integer(dates_pub))) # Par défaut, R a attribué le type `double` aux dates. Je peux forcer la transformation en nombres entiers en utilisant la fonction `as.integer()` sur le vecteur numérique.
+
+```
+
+Dans un tableau de données, les lignes sont des *observations* et les colonnes, des *variables*. Chaque variable, tel qu'indiqué ci-dessus, est d'un seul type. 
+
+
+## Manipulation d'un vecteur
+
+### Indexation par position
+Savoir manipuler les vecteurs est essentiel, puisque les autres structures sont construites avec cette unité de base. Les opérateurs d'indexation de base sont les crochets, placés immédiatement après l'objet.
+
+```{r}
+x
+x[1]
+x[23]
+```
+
+Si nous souhaitons manipuler ou extraire plus d'un élément, nous pouvons le faire en plaçant entre crochets un vecteur numérique correspondant à la position des éléments.
+
+```{r vecteur-plusieurs-elements}
+LETTERS[c(1:3, 5, 10)]
+month.name[c(1, 6, 12)]
+```
+
+Il est parfois difficile, avec des vecteurs d'une certaine longueur, de connaitre la position de chaque élément. Dans ce cas, nous pouvons faire appel à des fonctions qui nous aideront à "attraper" les éléments d'intérêt. Supposons par exemple que nous ayons un vecteur plutôt long composé d'une séquence répétée de chaines de caractères:
+
+```{r autre-vecteur}
+mon_vecteur <- rep(month.abb, 749876)
+length(mon_vecteur) # Cette fonction nous renverra la longueur du vecteur, soit le nombre d'éléments qu'il contient
+```
+
+Il est difficile de savoir quel sera le dernier élément de ce grand vecteur. Il serait encore plus difficile de deviner celui qui occupe, par exemple, la position précédent l'élément du milieu. Cependant, nous avons dans notre boite à outils quelques fonctions simples qui nous permettent de trouver nos réponses :
+
+```{r vecteur-long-manipulation}
+mon_vecteur[length(mon_vecteur)] # Ceci renverra le dernier élément du vecteur
+
+identical(mon_vecteur[8998512], mon_vecteur[length(mon_vecteur)])
+
+mon_vecteur[(length(mon_vecteur)/2-1)] # Ceci renverra l'élément précédant celui qui occupe la position médiane du vecteur.
+
+```
+
+### Indexation par nom
+Il existe deux autres manières de sélectionner des sous-ensembles d'éléments d'un vecteur, sans doute plus conviviales que l'indexation par position. La première, l'indexation par nom, suppose que chaque élément ait justement un nom. Prenons par exemple une courte liste d'oeuvres littéraires et associons-leur, en guise de noms, ceux de leurs auteurs. On n'a qu'à utiliser la fonction `names()` pour faire cette opération.
+
+```{r vecteur-nommé}
+mes_oeuvres <- c("Tableau de Paris", "Corinne", "Les Misérables", "La Débâcle")
+names(mes_oeuvres) <- c("Mercier", "Staël", "Hugo", "Zola")
+
+mes_oeuvres
+```
+
+On voit que chaque élément du vecteur, lorsque celui-ci est appelé, est accompagné de son nom. Nous pouvons dès lors utiliser ce nom pour obtenir le ou les éléments correspondants:
+
+```{r indexation-par-nom}
+mes_oeuvres["Mercier"]
+mes_oeuvres[c("Staël", "Hugo")]
+```
+
+### Indexation par condition
+
+Les booléens peuvent aussi être utilisés pour extraire des sous-ensembles d'éléments d'un vecteur. Pour cela, on donne au vecteur dont on souhaite extraire des éléments un autre vecteur, de même longueur, indiquant si tel élément doit être extrait (`TRUE`) ou non (`FALSE`):
+
+```{r indexation-booléen}
+mes_oeuvres[c(TRUE, FALSE, TRUE, FALSE)]
+```
+
+Le remplacement d'une valeur ou de plusieurs valeurs, dans un vecteur, se fait par assignation. Il faut sélectionner par indexation l'élément ou les éléments à remplacer, puis lui ou leur assigner une ou de nouvelles valeurs.
+
+```{r remplacement-vecteur}
+mes_oeuvres # On imprime le vecteur avant de changer certaines de ses valeurs
+mes_oeuvres[2] <- "Delphine"
+mes_oeuvres[c(3,4)] <- c("Hernani", "Nana")
+mes_oeuvres # On imprime à nouveau le vecteur pour voir le résultat de la transformation
+```
+
+
+### Structure d'une fonction
+Une fonction est composée de trois éléments:
+1. un nom
+2. des arguments
+3. des commandes
+
+On exécute une fonction par son nom et on lui fournit, entre parenthèses, les arguments dont elle a besoin. Certaines fonctions, telle `getwd()` utilisée ci-dessus, n'ont pas besoin d'arguments pour être exécutées. C'est que la plupart des fonctions ont, pour certains de leurs arguments, parfois même pour tous, des valeurs par défaut qui seront utilisées si vous ne les modifiez pas. La liste de ces arguments et des valeurs par défaut peut être obtenue en exécutant une fonction précédée d'un point d'interrogation.
+
+```{r aide-fonction}
+?head()
+```
+
+Comme nous l'indique la fenêtre d'aide, la fonction `head()` prend, comme premier argument `x`, un objet. Cet objet peut être un `vector`, une `matrix`, un `array`, une `list`, un `data frame` (on reviendra ultérieurement sur ces différentes structures de données). Prenons le plus simple d'entre eux, un vecteur composé des chiffres 1 à 100, et offrons-le en guise de `x` à la fonction `head()`:
+
+
+```{r fonction-head}
+head(x = c(1:100))
+```
+
+Seuls les 6 premiers éléments du vecteur nous sont renvoyés par la fonction. Cela veut dire que la valeur par défaut de l'argument `n` de `head()` est de six. On peut modifier la valeur de l'argument comme suit:
+
+```{r modification-argument-defaut}
+head(x = c(1:10), n = 10)
+```
+
+## Les fonctions
+Les fonctions sont des objets auxquels on a assigné un *nom*, des *arguments* et des *lignes de commande* qui s'exécuteront lorsque l'objet sera appelé. Le nom d'une fonction est suivi de parenthèses à l'intérieur de laquelle on précisera l'objet sur lequel s'effectueront les opérations (généralement désigné par `x`) et les arguments.
+
+La dizaine de milliers d'extensions de R (`packages` en anglais) offrent à l'utilisateur des ensembles de fonctions dédiées à des tâches spécifiques. Avant de créer nous-mêmes notre première fonction, nous allons importer, puis activer une extension très utile dans la manipulation de chaînes de caractères, `stringr`.
+
+```{r}
+install.packages("stringr") # La fonction `install.packages()` force l'installation d'une extension, mais ne l'active pas encore dans l'environnement.
+library(stringr) # La fonction `library()` active une extension préalablement installée.
+```
+
+Il y a plusieurs manières d'explorer le contenu d'une extension. Le plus simple consiste à écrire le nom de l'extension, suivi de 2 séries de deux-points. Des boites de dialogue aparaîtront automatiquement dans RStudio et on pourra faire défiler la liste des jeux de données et fonctions contenus dans l'extension. On peut également recourir à l'aide de RStudio en exécutant le nom de l'extention précédé d'un point d'interrogation. Dans le cas de `stringr`, un lien vers quelques sites externes qui fourniront des vignettes.
+
+```{r}
+# stringr::
+
+?stringr
+```
+
+Enfin, on peut se rendre sur le site CRAN et consulter la documentation complète de l'extension. Pour l'extention qui nous occupe, la documentation se trouve [ici]("https://cran.r-project.org/web/packages/stringr/index.html").
+
+Les extensions ne fournissent pas toutes des fonctions originales. Plusieurs visent à remplacer, souvent avantageusement, des fonctions de base ou des séries d'opérations qu'on pourrait faire autrement. On sauve parfois du temps, beaucoup de temps à simplement utiliser des fonctions contenues dans des extensions existantes, mais la perte de temps est également possible, car une extension peu ou plus entretenue risque de poser plus de problèmes qu'elle n'offre de solutions. Il est bon de consulter la documentation et de vérifier la fréquence des mises à jour.
+
+`stringr` fait partie d'une famille d'extensions regroupées sous le nom de `tidyverse`. Cette collection d'extensions a été construite avec un grand souci de cohérence et de rationalité. Une extension: un type de tâches. `stringr` pour la manipulation des chaînes de caractères, `dplyr` pour la manipulation des tableaux (`data frame`), `tidyr` pour le nettoyage des données, `ggplot2` pour la visualisation, et ainsi de suite. Cette collection utilise un opérateur de `magrittr`, le `%>%` ou pipe, qui permet l'enchaîinement des opérations sur un objet (gain en mémoire et en vitesse).
+
+```{r}
+?str_count
+mes_auteurs %>% str_count(pattern = "la")
+mes_oeuvres %>% str_locate(pattern = "ni")
+dates_pub %>% str_replace_all(pattern = "1", replacement = "2")
+mes_auteurs %>% str_sub(1,3)
+mes_oeuvres %>% str_split(pattern = "e") #Le résultat est présenté sous forme de liste
+
+```
+
+## Créer une fonction
+On peut créer soi-même une fonction en utilisant la fonction... `function()` de l'extension de base de R, et en lui fournissant les trois éléments indiqués ci-dessus, soit un *nom*, des *arguments* et des *lignes de commande*. Notre première fonction en sera une de manipulation de chaines de caractères. Elle nous servira à introduire des fonctions de base utiles dans la manipulation de données textuelles.
+
+Créons d'abord un vecteur composé de quatre éléments, soit quatre vers tirés du poème « Le vaisseau d'or » d'Émile Nelligan. On y insèrera volontairement quelques scories, comme on en trouve en abondance dans les données extraites de la Toile ou d'un document pdf.
+
+```{r vaisseau-d-or}
+vaisseau_dor <- c("c'était     un grand vaisseau taillé dans       l'or massif .",
+                  "Ses mats touchaient l''azur,  sur des mers inconnues..",
+                  "La Cyprine d'amour, cheveux épars, chair nue,",
+                  "S'étalait à sa proue,
+                  au soleil excessif.",
+                  "mais il vint une nuit frapper le grand    écueil ,",
+                  "Dans l'océan trompeur où chantait   la sirène,",
+                  " et le naufrage horrible inclina sa Carène",
+                  "aux profondeurs du Gouffre, immuable cercueil .")
+
+class(vaisseau_dor)
+length(vaisseau_dor)
+```
+
+La chaîne de caractères composant les éléments du vecteur `vaisseau_dor` comporte plusieurs problèmes: minuscules en début de ligne, parfois précédées d'espaces, des espaces en trop ou des sauts de ligne en milieu de vers, des ponctuations doubles, etc. Imaginez maintenant que vous avez, dans une liste ou un tableau, des centaines ou des milliers de poèmes tirés de la même source et présentant des problèmes similaires. Vous pourrez prendre les fonctions de base et de stringr pour faire le nettoyage en itérant sur chaque poème de cette liste ou de ce tableau, mais il pourrait être avantageux de réunir toutes ces fonctions en une seule grande fonction qui fera le nettoyage d'un seul coup, et qui pourrait ultérieurement être appliquée à d'autres objets similaires.
+
+La plupart des fonctions de l'extension `stringr` proposent un argument appelé « pattern » qui met à profit les expressions régulières. Si vous avez suivi les derniers ateliers, vous aurez entendu parler de ces expressions régulières, ou « regex », qui sont des chaînes de caractères répondant 
+à des règles syntaxiques qui permettront de repérer ou d'"attraper" des motifs au sein d'un document. Vous pourriez souhaiter, par exemple, repérer toute forme d'espace double dans un document sans avoir à préciser s'il s'agit de deux espaces typographiques simples, de tabulations ou de sauts de ligne. Vous pourriez dès lors utiliser le caractère spécial \s (ou \\s dans R)
+
+
+```{r regex}
+
+str_subset(vaisseau_dor, pattern = "\\s\\s")
+
+```
+
+
+Notre fonction de nettoyage peut tirer profit de ce caractère spécial pour remplacer tout espace multiple en espace simple:
+
+```{r fonction-nettoyage}
+
+nettoyage_f <- function(x) {
+  x <- str_replace_all(x, pattern = '\\s+', replacement = ' ')
+  return(x)
+}
+
+```
+
+Appliquons notre fonction à la chaine de caractères pour voir le résultat:
+```{r premier-essai}
+nettoyage_f(vaisseau_dor)
+```
+
+Notre fonction est exécutable et accomplit la première étape du nettoyage. Attaquons-nous aux autres problèmes
+
+```{r}
+
+nettoyage_f <- function(x) {
+  x <- str_replace_all(x, pattern = '\\s+', replacement = ' ')
+  x <- str_replace_all(x, pattern = '^\\s|\\s$', replacement = "") # Espaces superflus au début ou à la fin d'un élément du vecteur
+  x <- str_replace_all(x, pattern = '\\s\\.', replacement = ".") # Espace avant un point final
+  x <- str_replace_all(x, pattern = '\\s,', replacement = ",") # Espace avant un point final
+  x <- str_replace_all(x, pattern = '([[:punct:]])\\1+', replacement = '\\1') #Ponctuations multiples
+  str_sub(x, start = 1, end = 1) <- str_sub(x, start = 1, end = 1) %>% str_to_upper(., locale = "fr") # Remplacement de la première lettre de chaque élément par l'équivalent en majuscule
+  return(x)
+}
+nettoyage_f(vaisseau_dor)
+
+```
+
+## Défi
+Pourriez-vous créer une fonction qui assemble, en une seule et même chaine de caractères, les huit éléments du vecteur `vaisseau_dor`? Un indice: vous aurez besoin de la fonction `paste()`.
+
+Le résultat de votre opération devrait ressembler à ceci:
+
+[1] "C'était un grand vaisseau taillé dans l'or massif. Ses mats touchaient l'azur, sur des mers inconnues. La Cyprine d'amour, cheveux épars, chair nue, S'étalait à sa proue, au soleil excessif. Mais il vint une nuit frapper le grand écueil, Dans l'océan trompeur où chantait la sirène, Et le naufrage horrible inclina sa Carène Aux profondeurs du Gouffre, immuable cercueil."
+
