@@ -488,22 +488,23 @@ Notre fonction est exécutable et accomplit la première étape du nettoyage. Av
 
 #### Expressions régulières
 
-* `.`                                 ==> Tout type de caractère (lettre, chiffre, ponctuation, espace), une fois;
-* `\s` (`\\s` dans R)                 ==> Tout type d'espace, une fois;
-* `[:punct:]`                         ==> Tout type de ponctuation, une fois;
-* `[:alpha:]`                         ==> Tout type de lettre, une fois;
-* `[:digit:]` ou \d (`\\d` dans R)    ==> Tout type de chiffre, une fois;
-* `[:alnum:]`                         ==> Tout type de lettre ou de chiffre, une fois;
-* `[]`                                ==> Le ou les éléments que les crochets entourent, une seule fois;
+* `.`                                 ==> tout type de caractère (lettre, chiffre, ponctuation, espace), une fois;
+* `\s` (`\\s` dans R)                 ==> tout type d'espace, une fois;
+* `[:punct:]`                         ==> tout type de ponctuation, une fois;
+* `[:alpha:]`                         ==> tout type de lettre, une fois;
+* `[:digit:]` ou \d (`\\d` dans R)    ==> tout type de chiffre, une fois;
+* `[:alnum:]`                         ==> tout type de lettre ou de chiffre, une fois;
+* `[]`                                ==> le ou les éléments entre crochets, une seule fois;
 
-* `+`                                 ==> Quantifieur gourmand (l'élément qui le précède, autant de fois qu'il apparaît);
-* `?`                                 ==> Quantifieur frugal (l'élément qui le précède est facultatif ou ne doit apparaître qu'une fois);
-* `{x,y}`                             ==> Quantifieur précis (x = n fois min; y = n fois max);
+* `+`                                 ==> quantifieur gourmand (l'élément qui le précède, autant de fois qu'il apparaît);
+* `?`                                 ==> quantifieur frugal (l'élément qui le précède est facultatif ou ne doit apparaître qu'une fois);
+* `*`                                 ==> quantifieur frugal ou gourmand, selon la situation;
+* `{x,y}`                             ==> quantifieur précis (x = n fois min; y = n fois max);
 
 * `|`                                 ==> opérateur indiquant une option (OU);
 
-* `(?=)`                              ==> Groupe indiquant "suivi de" (ce qui est entre parenthèses ne sera pas "attrapé");
-* `(?<=)`                             ==> Groupe indiquant "précédé de" (ce qui est entre parenthèses ne sera pas "attrapé");
+* `(?=)`                              ==> groupe indiquant "suivi de" (ce qui est entre parenthèses ne sera pas "attrapé");
+* `(?<=)`                             ==> groupe indiquant "précédé de" (ce qui est entre parenthèses ne sera pas "attrapé");
 
 
 Vous trouverez sur la Toile plusieurs sites proposant la liste complète des règles. J'utilise personnellement les outils du site [regular expression 101]("https://regex101.com/").
@@ -512,10 +513,9 @@ Vous trouverez sur la Toile plusieurs sites proposant la liste complète des rè
 ```{r}
 
 nettoyage_f <- function(x) {
-  x <- str_replace_all(x, pattern = '\\s+', replacement = ' ')
   x <- str_replace_all(x, pattern = '^\\s|\\s$', replacement = "") # Espaces superflus au début ou à la fin d'un élément du vecteur
-  x <- str_replace_all(x, pattern = '\\s+(?=(\\.|,))', replacement = "") # Espace avant un point final ou une virgule
-  x <- str_replace_all(x, pattern = '([[:punct:]])\\1+', replacement = '\\1') #Ponctuations multiples
+  x <- str_replace_all(x, pattern = '\\s*(?=(\\.|,))', replacement = "") # Espace avant un point final ou une virgule
+  x <- str_replace_all(x, pattern = '([[:punct:]\\s])\\1+', replacement = '\\1') # Ponctuations et espaces multiples
   str_sub(x, start = 1, end = 1) <- str_sub(x, start = 1, end = 1) %>% str_to_upper(., locale = "fr") # Remplacement de la première lettre de chaque élément par l'équivalent en majuscule
   return(x)
 }
