@@ -515,7 +515,8 @@ Vous trouverez sur la Toile plusieurs sites proposant la liste complète des rè
 nettoyage_f <- function(x) {
   x <- str_replace_all(x, pattern = '^\\s|\\s$', replacement = "") # Espaces superflus au début ou à la fin d'un élément du vecteur
   x <- str_replace_all(x, pattern = '\\s*(?=(\\.|,))', replacement = "") # Espace avant un point final ou une virgule
-  x <- str_replace_all(x, pattern = '([[:punct:]\\s])\\1+', replacement = '\\1') # Ponctuations et espaces multiples
+  x <- str_replace_all(x, pattern = '([[:punct:]])\\1+', replacement = '\\1') # Ponctuations multiples
+  x <- str_replace_all(x, pattern = '\\s+', replacement = ' ') # Espaces multiples
   str_sub(x, start = 1, end = 1) <- str_sub(x, start = 1, end = 1) %>% str_to_upper(., locale = "fr") # Remplacement de la première lettre de chaque élément par l'équivalent en majuscule
   return(x)
 }
