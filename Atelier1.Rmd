@@ -42,7 +42,7 @@ setwd("/cloud/project") # Ce chemin correspond à l'environnement de RStudio Clo
 
 
 ### Création de sous-dossiers
-En règle général, on va diviser une tâche en différents scripts, puis les lier ultérieurement entre eux avec la fonction `source()`. Cette façon de faire facilitera la correction et la modification du code, lorsque nécessaire.
+En règle générale, on va diviser une tâche en différents scripts, puis les lier ultérieurement entre eux avec la fonction `source()`. Cette façon de faire facilitera la correction et la modification du code, lorsque nécessaire.
 
 Si nous avons plusieurs scripts, plusieurs jeux de données et possiblement plusieurs graphiques et documents, il sera souhaitable d'enregistrer ces documents dans autant de sous-dossiers. La fonction `dir.create()` nous aidera à créer ces sous-dossiers.
 
@@ -379,7 +379,7 @@ mes_oeuvres # On imprime à nouveau le vecteur pour voir le résultat de la tran
 ```
 
 
-### Structure d'une fonction
+## Structure d'une fonction
 Une fonction est composée de trois éléments:
 1. un nom
 2. des arguments
