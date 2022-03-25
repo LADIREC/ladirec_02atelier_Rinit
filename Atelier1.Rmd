@@ -458,7 +458,7 @@ length(vaisseau_dor)
 
 La chaîne de caractères composant les éléments du vecteur `vaisseau_dor` comporte plusieurs problèmes: minuscules en début de ligne, parfois précédées d'espaces, des espaces en trop ou des sauts de ligne en milieu de vers, des ponctuations doubles, etc. Imaginez maintenant que vous avez, dans une liste ou un tableau, des centaines ou des milliers de poèmes tirés de la même source et présentant des problèmes similaires. Vous pourrez prendre les fonctions de base et de `stringr` pour faire le nettoyage en itérant sur chaque poème de cette liste ou de ce tableau, mais il pourrait être avantageux de réunir toutes ces fonctions en une seule grande fonction qui fera le nettoyage d'un seul coup, et qui pourrait ultérieurement être appliquée à d'autres objets similaires.
 
-La plupart des fonctions de l'extension `stringr` proposent un argument appelé « pattern » qui met à profit les expressions régulières. Si vous avez suivi les derniers ateliers, vous aurez entendu parler de ces expressions régulières, ou « regex », qui sont des chaînes de caractères répondant à des règles syntaxiques précises. Les expressions régulières permettent de repérer ou d'« attraper » des motifs au sein d'un document. Vous pourriez souhaiter, par exemple, repérer toute forme d'espace double dans un document sans avoir à préciser s'il s'agit de deux espaces typographiques simples, de tabulations ou de sauts de ligne. Vous pourriez dès lors utiliser le caractère spécial \s (ou \\s dans R)
+La plupart des fonctions de l'extension `stringr` proposent un argument appelé « pattern » qui met à profit les expressions régulières. Si vous avez suivi les derniers ateliers, vous aurez entendu parler de ces expressions régulières, ou « regex », qui sont des chaînes de caractères répondant à des règles syntaxiques précises. Les expressions régulières permettent de repérer ou d'« attraper » des motifs au sein d'un document. Vous pourriez souhaiter, par exemple, repérer toute forme d'espace double dans un document sans avoir à préciser s'il s'agit de deux espaces typographiques simples, de tabulations ou de sauts de ligne. Vous pourriez dès lors utiliser le caractère spécial \s (ou \\s dans R).
 
 
 ```{r regex}
@@ -484,7 +484,30 @@ Appliquons notre fonction à la chaine de caractères pour voir le résultat:
 nettoyage_f(vaisseau_dor)
 ```
 
-Notre fonction est exécutable et accomplit la première étape du nettoyage. Attaquons-nous aux autres problèmes
+Notre fonction est exécutable et accomplit la première étape du nettoyage. Avant de nous attaquer aux autres problèmes, voyons quelques règles régissant les expressions régulières.
+
+#### Expressions régulières
+
+* `.`                             ==> Tout type de caractère (lettre, chiffre, ponctuation, espace), une fois;
+* `\s` (\\s dans R)               ==> Tout type d'espace, une fois;
+* `[:punct:]`                     ==> Tout type de ponctuation, une fois;
+* `[:alpha:]`                     ==> Tout type de lettre, une fois;
+* `[:digit:]` ou \d (\\d dans R)  ==> Tout type de chiffre, une fois;
+* `[:alnum:]`                     ==> Tout type de lettre ou de chiffre, une fois;
+* `[]`                            ==> Le ou les éléments que les crochets entourent, une seule fois;
+
+* `+`                             ==> Quantifieur gourmand (l'élément qui le précède, autant de fois qu'il apparaît);
+* `?`                             ==> Quantifieur frugal (l'élément qui le précède est facultatif ou ne doit apparaître qu'une fois);
+* `{x,y}`                         ==> Quantifieur précis (x = n fois min; y = n fois max);
+
+* `|`                             ==> opérateur indiquant une option (OU);
+
+* `(?=)`                          ==> Groupe indiquant "suivi de" (ce qui est entre parenthèses ne sera pas "attrapé");
+* `(?<=)`                         ==> Groupe indiquant "précédé de" (ce qui est entre parenthèses ne sera pas "attrapé");
+
+
+Vous trouverez sur la Toile plusieurs sites proposant la liste complète des règles. J'utilise personnellement les outils du site [regular expression 101]("https://regex101.com/").
+
 
 ```{r}
 
